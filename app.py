@@ -8,6 +8,13 @@ app.config['SECRET_KEY'] = '123mvfamlNRN"SQL-N@F-RUN"queryselector(.teupaifdp)"'
 CORS(app, supports_credentials=True)
 
 
+def GetNumeroVisitante():
+    conteudo = 0
+    with open('cont.txt', 'r', encoding='UTF-*') as file:
+        conteudo = file.read()
+    return conteudo
+
+
 def AddContDate():
     conteudo = 0
     with open('cont.txt', 'r', encoding='UTF-8') as file:
@@ -16,8 +23,6 @@ def AddContDate():
     conteudo += 1
     with open('cont.txt', 'w', encoding='UTF-8') as file:
         file.write(str(conteudo))
-    #retornando o numero de visita
-    return conteudo
 
 
 @app.route('/addvisita', methods=["GET"])
@@ -34,10 +39,8 @@ def AddContVisita():
             app.config['SECRET_KEY'],
             algorithm="HS256"
         )
-        numero_total_visitante = AddContDate()
         resposta = make_response(jsonify({
-            'sucesso': True,
-            'total_visitante': numero_total_visitante
+            'sucesso': True
             }))
         resposta.set_cookie(
                 'token',
@@ -47,9 +50,22 @@ def AddContVisita():
                 secure=False,
                 max_age=1800    
             )
+        #add +1 visita
+        AddContDate()
         return resposta
     except Exception:
         return {'sucesso': False}, 401
+    
+
+@app.route('/getnumerovisitante', methods=["GET"])
+def GetNumeroVisititante():
+    try:
+        conteudo = GetNumeroVisitante()
+        return {'sucesso': True, 'numero_visitantes': conteudo}, 201
+    except Exception as error:
+        print(error)
+        return {'sucesso': False}, 201
+
 
 if __name__ == '__main__':
     app.run(debug=True)
