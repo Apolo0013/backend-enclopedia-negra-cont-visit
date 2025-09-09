@@ -5,12 +5,12 @@ from datetime import datetime, timedelta, timezone
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '123mvfamlNRN"SQL-N@F-RUN"queryselector(.teupaifdp)"' 
-CORS(app, supports_credentials=True)
+CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
 
 
 def GetNumeroVisitante():
     conteudo = 0
-    with open('cont.txt', 'r', encoding='UTF-*') as file:
+    with open('cont.txt', 'r', encoding='UTF-8') as file:
         conteudo = file.read()
     return conteudo
 
@@ -29,8 +29,8 @@ def AddContDate():
 def AddContVisita():
     token_existente = request.cookies.get('token')
     # ele exisir
-    if (token_existente): 
-        return {'sucesso': False}, 401
+    if token_existente: 
+        return {'sucesso': False}, 201
     try:
         token = jwt.encode({
             'visita': True,
@@ -42,13 +42,15 @@ def AddContVisita():
         resposta = make_response(jsonify({
             'sucesso': True
             }))
+        expires = datetime.now(timezone.utc) + timedelta(minutes=30)  
         resposta.set_cookie(
                 'token',
                 token,
                 httponly=True,
-                samesite='Lax',
-                secure=False,
-                max_age=1800    
+                samesite="None",
+                secure=True,
+                max_age=1800,
+                expires=expires 
             )
         #add +1 visita
         AddContDate()
