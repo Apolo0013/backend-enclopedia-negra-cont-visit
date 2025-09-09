@@ -5,7 +5,10 @@ from datetime import datetime, timedelta, timezone
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '123mvfamlNRN"SQL-N@F-RUN"queryselector(.teupaifdp)"' 
-CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
+CORS(app, supports_credentials=True, origins=[
+        "http://localhost:3000",
+        "https://apolo0013.github.io"
+        ])
 
 
 def GetNumeroVisitante():
